@@ -2,14 +2,24 @@
   "name": "gendi",
   "version": "0.1.0",
   "description": "Container-based DI using promises and generators",
-  "keywords": ["dependency", "injection", "di", "ioc", "container", "promise", "generator"],
+  "keywords": [
+    "dependency",
+    "injection",
+    "di",
+    "ioc",
+    "container",
+    "promise",
+    "generator"
+  ],
   "main": "src/gendi.js",
   "directories": {
     "test": "test"
   },
-  "engines": { "node": ">=0.10" },
+  "engines": {
+    "node": ">=0.10"
+  },
   "scripts": {
-    "test": "mocha --harmony -b -r util/mocha-generators"
+    "test": "mocha --harmony -b -r node_modules/bluebird-mocha-generators"
   },
   "repository": {
     "type": "git",
@@ -23,7 +33,8 @@
   "homepage": "https://github.com/russpowers/gendi",
   "devDependencies": {
     "chai": "~1.9.1",
-    "mocha": "~1.18.2"
+    "mocha": "~1.18.2",
+    "bluebird-mocha-generators": "~0.1.0"
   },
   "dependencies": {
     "bluebird": "~1.2.2"
