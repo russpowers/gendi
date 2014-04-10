@@ -11,6 +11,23 @@ function getParameterNames(fn) {
 	return result === null ? []	: result;
 }
 
+var ResolutionError = function(name, parentName) {
+	if (typeof parentName === 'string') {
+		this.message = "Could not resolve parameter '" + name + "' when resolving instance '" + parentName + "'";
+	} else {
+		this.message = "Could not resolve instance '" + name + "'";
+	}
+};
+
+ResolutionError.prototype = new Error();
+ResolutionError.prototype.constructor = ResolutionError;
+
+ResolutionError.prototype.toString = function() {
+	return this.message;
+};
+
+module.exports = ResolutionError;
+
 function preprocessFunction(fn) {
 	if (fn.__IS_GENERATOR__ !== undefined) {
 		return;
@@ -71,7 +88,7 @@ ContainerDefinition.prototype.defineChild = function(name) {
 
 ContainerDefinition.prototype.resolver = function(name, actions) {
 	if (this._items.__HAS_OWN_PROPERTY__(name)) {
-		throw 'Already registered container definition item with name ' + name;
+		throw new Error('Already registered container definition item with name ' + name);
 	}
 
 	if (typeof actions === 'function') {
@@ -158,7 +175,7 @@ Container.prototype.resolve = function(name) {
 	// No resolver, just take the nearest instance
 	if (!defItem) {
 		if (instance === undefined) {
-			throw new Error('Could not resolve instance with name: ' + name);
+			throw new ResolutionError(name);
 		} else {
 			return Promise.resolve(instance);
 		}
@@ -257,12 +274,12 @@ function ContainerInterface() {
 
 ContainerInterface.prototype.getDefinition = function(definitionName) {
 	if (typeof definitionName !== 'string') {
-		throw 'getDefinition() expects a definition name';
+		throw new Error('getDefinition() expects a definition name');
 	}
 
 	var definition = this._containerDefinitions[definitionName];
 	if (definition === undefined) {
-		throw 'getDefinition() could not find definition ' + definitionName;
+		throw new Error('getDefinition() could not find definition ' + definitionName);
 	}
 
 	return definition;
@@ -276,7 +293,7 @@ ContainerInterface.prototype.define = function(name, parentName) {
 	var parent;
 
 	if (name in this._containerDefinitions) {
-		throw 'define() could not define container, name is not unique: ' + name;
+		throw new Error('define() could not define container, name is not unique: ' + name);
 	}
 
 	if (parentName) {
